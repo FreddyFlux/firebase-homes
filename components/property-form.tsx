@@ -1,9 +1,9 @@
 "use client";
 
 import { useForm } from "react-hook-form";
-import { propertyDataSchema } from "@/validation/propertySchema";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { propertyDataSchema } from "@/validation/propertySchema";
 import {
   Form,
   FormControl,
@@ -24,19 +24,20 @@ import { Textarea } from "./ui/textarea";
 import { Button } from "./ui/button";
 
 type Props = {
-  handleSubmit: (data: z.infer<typeof propertyDataSchema>) => void;
   submitButtonLabel: React.ReactNode;
+  handleSubmit: (data: z.infer<typeof propertyDataSchema>) => void;
+  defaultValues?: z.infer<typeof propertyDataSchema>;
 };
 
 export default function PropertyForm({
   handleSubmit,
   submitButtonLabel,
+  defaultValues,
 }: Props) {
-  const form = useForm<z.infer<typeof propertyDataSchema>>({
-    resolver: zodResolver(propertyDataSchema),
-    defaultValues: {
-      adress1: "",
-      adress2: "",
+  const combinedDefaultValues: z.infer<typeof propertyDataSchema> = {
+    ...{
+      address1: "",
+      address2: "",
       city: "",
       postcode: "",
       price: 0,
@@ -45,6 +46,11 @@ export default function PropertyForm({
       square_meters: 0,
       status: "draft",
     },
+    ...defaultValues,
+  };
+  const form = useForm<z.infer<typeof propertyDataSchema>>({
+    resolver: zodResolver(propertyDataSchema),
+    defaultValues: combinedDefaultValues,
   });
 
   return (
@@ -85,7 +91,7 @@ export default function PropertyForm({
             />
             <FormField
               control={form.control}
-              name="adress1"
+              name="address1"
               render={({ field }) => (
                 <FormItem>
                   <FormLabel>Address 1</FormLabel>
@@ -98,7 +104,7 @@ export default function PropertyForm({
             />
             <FormField
               control={form.control}
-              name="adress2"
+              name="address2"
               render={({ field }) => (
                 <FormItem>
                   <FormLabel>Address 2</FormLabel>

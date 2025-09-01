@@ -15,8 +15,8 @@ const PostalCodeComprehensive = z
   );
 
 export const propertyDataSchema = z.object({
-  adress1: z.string().min(1, { message: "Address line 1 is required." }),
-  adress2: z.string().optional(),
+  address1: z.string().min(1, { message: "Address line 1 is required." }),
+  address2: z.string().optional(),
   city: z.string().min(3, "City must contain at least 3 characters."),
   postcode: PostalCodeComprehensive,
   price: z.number().positive("Price must be greater than 0"),

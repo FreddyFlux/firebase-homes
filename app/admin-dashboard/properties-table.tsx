@@ -1,3 +1,4 @@
+import PropertyStatusBadge from "@/components/property-status-badge";
 import { Button } from "@/components/ui/button";
 import {
   Table,
@@ -16,13 +17,21 @@ import {
 import { getProperties } from "@/data/properties";
 import { EyeIcon, PencilIcon } from "lucide-react";
 import Link from "next/link";
-import numeral from "numeral";
+// import { PriceDisplay } from "@/components/ui/price-display"; // Alternative option
+
+// Simple SSR-safe number formatter
+function formatPrice(price: number): string {
+  return new Intl.NumberFormat("en-US", {
+    minimumFractionDigits: 0,
+    maximumFractionDigits: 0,
+  }).format(price);
+}
 
 export default async function PropertiesTable({ page = 1 }: { page?: number }) {
   const { data, totalPages } = await getProperties({
     pagination: {
       page,
-      pageSize: 3,
+      pageSize: 4,
     },
   });
   return (
@@ -54,10 +63,10 @@ export default async function PropertiesTable({ page = 1 }: { page?: number }) {
               return (
                 <TableRow key={property.id}>
                   <TableCell>{address}</TableCell>
+                  <TableCell>{formatPrice(property.price)} €</TableCell>
                   <TableCell>
-                    {numeral(property.price).format("0,0")} €
+                    <PropertyStatusBadge status={property.status} />
                   </TableCell>
-                  <TableCell>{property.status}</TableCell>
                   <TableCell className="flex justify-end gap-1">
                     <Tooltip>
                       <TooltipTrigger>
@@ -89,7 +98,8 @@ export default async function PropertiesTable({ page = 1 }: { page?: number }) {
               <TableCell colSpan={4} className="text-center">
                 {Array.from({ length: totalPages }).map((_, index) => (
                   <Button
-                    asChild
+                    disabled={page === index + 1}
+                    asChild={page !== index + 1}
                     key={index}
                     variant="outline"
                     className="mx-1"

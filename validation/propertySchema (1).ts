@@ -15,16 +15,16 @@ const PostalCodeComprehensive = z
   );
 
 export const propertyDataSchema = z.object({
-  address1: z.string().min(1, { message: "Address line 1 is required." }),
-  address2: z.string().optional(),
+  adress1: z.string().min(1, { message: "Address line 1 is required." }),
+  adress2: z.string().optional(),
   city: z.string().min(3, "City must contain at least 3 characters."),
   postcode: PostalCodeComprehensive,
-  price: z.number().positive("Price must be greater than 0"),
+  price: z.coerce.number().positive("Price must be greater than 0"),
   description: z
     .string()
     .min(10, "Description must be at least 10 characters."),
-  bedrooms: z.number().min(1, "Bedrooms must be at least 1"),
-  square_meters: z.number().min(1, "Square meters must be at least 1"),
+  bedrooms: z.coerce.number().min(1, "Bedrooms must be at least 1"),
+  square_meters: z.coerce.number().min(1, "Square meters must be at least 1"),
   status: z.enum([
     "draft",
     "for-sale",
@@ -34,15 +34,3 @@ export const propertyDataSchema = z.object({
     "withdrawn",
   ]),
 });
-
-export const propertyImagesSchema = z.object({
-  images: z.array(
-    z.object({
-      id: z.string(),
-      url: z.string(),
-      file: z.instanceof(File).optional(),
-    })
-  ),
-});
-
-export const propertySchema = propertyDataSchema.and(propertyImagesSchema);

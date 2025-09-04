@@ -11,4 +11,5 @@ export type Property = {
   description: string;
   square_meters: number;
   status: PropertyStatus;
+  images?: string[];
 };

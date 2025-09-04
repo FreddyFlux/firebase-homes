@@ -3,7 +3,7 @@
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { propertyDataSchema } from "@/validation/propertySchema";
+import { propertySchema } from "@/validation/propertySchema";
 import {
   Form,
   FormControl,
@@ -22,11 +22,12 @@ import {
 import { Input } from "./ui/input";
 import { Textarea } from "./ui/textarea";
 import { Button } from "./ui/button";
+import MultiImageUploader, { ImageUpload } from "./multi-image-uploader";
 
 type Props = {
   submitButtonLabel: React.ReactNode;
-  handleSubmit: (data: z.infer<typeof propertyDataSchema>) => void;
-  defaultValues?: z.infer<typeof propertyDataSchema>;
+  handleSubmit: (data: z.infer<typeof propertySchema>) => void;
+  defaultValues?: z.infer<typeof propertySchema>;
 };
 
 export default function PropertyForm({
@@ -34,7 +35,7 @@ export default function PropertyForm({
   submitButtonLabel,
   defaultValues,
 }: Props) {
-  const combinedDefaultValues: z.infer<typeof propertyDataSchema> = {
+  const combinedDefaultValues: z.infer<typeof propertySchema> = {
     ...{
       address1: "",
       address2: "",
@@ -45,11 +46,12 @@ export default function PropertyForm({
       bedrooms: 0,
       square_meters: 0,
       status: "draft",
+      images: [],
     },
     ...defaultValues,
   };
-  const form = useForm<z.infer<typeof propertyDataSchema>>({
-    resolver: zodResolver(propertyDataSchema),
+  const form = useForm<z.infer<typeof propertySchema>>({
+    resolver: zodResolver(propertySchema),
     defaultValues: combinedDefaultValues,
   });
 
@@ -225,6 +227,33 @@ export default function PropertyForm({
             />
           </fieldset>
         </div>
+        <FormField
+          control={form.control}
+          name="images"
+          render={({ field }) => (
+            <FormItem className="mt-4">
+              <FormLabel>Images</FormLabel>
+              <FormControl>
+                <MultiImageUploader
+                  onImagesChange={(images: ImageUpload[]) => {
+                    form.setValue("images", images);
+                  }}
+                  images={field.value}
+                  urlFormatter={(image) => {
+                    if (!image.file) {
+                      return `https://firebasestorage.googleapis.com/v0/b/fire-homes-course-d4d63.firebasestorage.app/o/${encodeURIComponent(
+                        image.url
+                      )}?alt=media`;
+                    }
+                    return image.url;
+                  }}
+                />
+              </FormControl>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+
         <Button
           type="submit"
           className="mt-4 max-w-md mx-auto w-full flex gap-2"

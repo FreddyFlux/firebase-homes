@@ -39,6 +39,7 @@ export default async function EditPropertyPage({
             bedrooms={property.bedrooms}
             square_meters={property.square_meters}
             status={property.status}
+            images={property.images || []}
           />
         </CardContent>
       </Card>
